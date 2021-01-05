@@ -1,32 +1,28 @@
 pipeline {
-    stages {
-		stage('Integration-Testing') {
-			agent {
-				docker {
-					image 'jamesdbloom/docker-java8-maven:latest'
+	agent {
+		docker {
+			image 'jamesdbloom/docker-java8-maven:latest'
+		}
+	}
+	stages {
+		stage('Set Up') {
+			steps {
+				script {
+					sh 'rm -rf integrations'
 				}
 			}
-			stages {
-				stage('Set Up') {
-					steps {
-						script {
-							sh 'rm -rf integrations'
-						}
-					}
-				}
-				stage('SCM Checkout') {
-					steps {
-						sh 'git clone https://github.com/nmm131/jenkins.docker.spring.react.selenium_person-database integrations'
-					}
-				}
-				stage('Compile-Package-Test') {
-					steps {
-						script {
-							dir('./integrations/integration-testing') {
-								sh "sleep 6m"
-								sh "mvn package -Dmaven.test.failure.ignore=true"
-							}
-						}
+		}
+		stage('SCM Checkout') {
+			steps {
+				sh 'git clone https://github.com/nmm131/jenkins.docker.spring.react.selenium_person-database integrations'
+			}
+		}
+		stage('Compile-Package-Test') {
+			steps {
+				script {
+					dir('./integrations/integration-testing') {
+						sh "sleep 6m"
+						sh "mvn package -Dmaven.test.failure.ignore=true"
 					}
 				}
 			}

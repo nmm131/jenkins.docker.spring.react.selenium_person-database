@@ -1,0 +1,35 @@
+pipeline {
+	agent {
+		docker {
+			image 'jamesdbloom/docker-java8-maven:latest'
+			args '-v /root/.m2:/root/.m2 -p 8050:8050'
+		}
+	}
+	stages {
+		stage('Set Up') {
+			steps {
+				script {
+					sh 'rm -rf back-end'
+				}
+			}
+		}
+		stage('SCM Checkout') {
+			steps {
+				script {
+					sh 'git clone https://github.com/nmm131/jenkins.docker.spring.react.selenium_person-database.git back-end'
+				}
+			}
+		}
+		stage('Compile-Package-Test') {
+			steps {
+				script {
+					dir('./back-end/webservice') {
+						sh "mvn spring-boot:run &"
+						sh "sleep 8m"
+						sh "echo 'Closing Spring Application'"
+					}
+				}
+			}
+		}
+	}
+}
